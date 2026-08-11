@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ganesh Kumar Jha — Logistics & Projects Professional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#08080a;
+    --bg2:#111113;
+    --panel:#131316;
+    --red:#e0102a;
+    --red-deep:#7a0d1f;
+    --red-glow:#ff2d47;
+    --white:#f3f2f0;
+    --gray:#8f8f96;
+    --line:rgba(255,255,255,0.09);
+    --line-red:rgba(224,16,42,0.35);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--white);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+    cursor:default;
+  }
+  ::selection{background:var(--red);color:#fff;}
+
+  #bg-canvas{
+    position:fixed;
+    top:0;left:0;
+    width:100vw;height:100vh;
+    z-index:0;
+    opacity:0.9;
+  }
+
+  .float-layer{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  section{overflow:visible;}
+  .float-icon{
+    position:absolute;
+    opacity:0.5;
+    color:var(--red);
+    will-change:transform;
+    filter:drop-shadow(0 0 10px rgba(224,16,42,0.15));
+  }
+  .float-icon.gray{color:var(--gray);}
+  .float-icon svg{display:block;width:100%;height:100%;fill:currentColor;}
+
+  .noise{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,0.035) 1px, transparent 0);
+    background-size:3px 3px;
+    mix-blend-mode:overlay;
+  }
+
+  .vignette{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.75) 100%);
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed;
+    top:0;right:0;
+    z-index:50;
+    padding:38px 48px;
+    display:flex;
+    gap:22px;
+    align-items:center;
+  }
+  .nav-dot{
+    width:8px;height:8px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.25);
+    border:1px solid rgba(255,255,255,0.25);
+    cursor:pointer;
+    transition:.35s;
+    position:relative;
+  }
+  .nav-dot.active{background:var(--red);border-color:var(--red);box-shadow:0 0 12px var(--red-glow);}
+  .nav-dot::after{
+    content:attr(data-label);
+    position:absolute;
+    right:22px;top:50%;
+    transform:translateY(-50%);
+    font-family:'Big Shoulders Display',sans-serif;
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--gray);
+    opacity:0;
+    white-space:nowrap;
+    transition:.25s;
+    pointer-events:none;
+  }
+  .nav-dot:hover::after{opacity:1;}
+
+  @media(max-width:768px){nav{display:none;}}
+
+  /* ---------- SECTIONS ---------- */
+  section{
+    position:relative;
+    z-index:5;
+    min-height:auto;
+    padding:90px 8vw 70px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+
+  .eyebrow{
+    font-family:'Big Shoulders Display',sans-serif;
+    font-size:13px;
+    letter-spacing:5px;
+    text-transform:uppercase;
+    color:var(--red);
+    margin-bottom:18px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:34px;height:2px;
+    background:var(--red);
+  }
+
+  h1,h2,h3{font-family:'Big Shoulders Display',sans-serif;text-transform:uppercase;letter-spacing:0.5px;}
+
+  /* ---------- HERO ---------- */
+  #hero{
+    align-items:flex-start;
+    padding-top:0;
+    min-height:88vh;
+  }
+  .hero-inner{max-width:1100px;}
+  .hero-name{
+    font-size:clamp(52px,9vw,124px);
+    font-weight:800;
+    line-height:0.92;
+    background:linear-gradient(180deg,#ffffff 0%, #ffffff 55%, #6b6b6f 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    letter-spacing:1px;
+  }
+  .hero-title{
+    font-family:'Inter',sans-serif;
+    font-size:clamp(14px,2vw,19px);
+    color:var(--gray);
+    font-weight:400;
+    margin-top:18px;
+    max-width:620px;
+    letter-spacing:0.3px;
+  }
+  .hero-title strong{color:var(--white);font-weight:600;}
+
+  .hero-contacts{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-top:30px;
+  }
+  .contact-pill{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:11px 18px;
+    border:1px solid var(--line);
+    border-radius:100px;
+    font-size:13px;
+    color:var(--gray);
+    background:rgba(255,255,255,0.02);
+    backdrop-filter:blur(6px);
+    transition:.3s;
+  }
+  .contact-pill:hover{
+    border-color:var(--line-red);
+    color:var(--white);
+    transform:translateY(-2px);
+  }
+  .contact-pill svg{width:15px;height:15px;fill:var(--red);flex-shrink:0;}
+
+  .scroll-cue{
+    position:absolute;
+    bottom:48px;left:8vw;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-family:'Big Shoulders Display',sans-serif;
+    font-size:12px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--gray);
+  }
+  .scroll-line{
+    width:1px;height:44px;
+    background:linear-gradient(var(--red), transparent);
+    animation:scrollmove 1.8s ease-in-out infinite;
+  }
+  @keyframes scrollmove{
+    0%{transform:scaleY(0);transform-origin:top;}
+    50%{transform:scaleY(1);transform-origin:top;}
+    50.01%{transform-origin:bottom;}
+    100%{transform:scaleY(0);transform-origin:bottom;}
+  }
+
+  /* ---------- REVEAL ---------- */
+  .reveal{
+    opacity:0;
+    transform:translateY(50px);
+    transition:opacity 0.9s cubic-bezier(.16,.84,.44,1), transform 0.9s cubic-bezier(.16,.84,.44,1);
+  }
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  /* ---------- SUMMARY ---------- */
+  #summary{align-items:flex-start;}
+  .summary-grid{
+    display:grid;
+    grid-template-columns:0.9fr 1.6fr;
+    gap:60px;
+    width:100%;
+    max-width:1200px;
+  }
+  .summary-num{
+    font-family:'Big Shoulders Display',sans-serif;
+    font-size:clamp(90px,10vw,150px);
+    font-weight:700;
+    color:transparent;
+    -webkit-text-stroke:1.5px rgba(224,16,42,0.55);
+    line-height:1;
+  }
+  .summary-text{
+    font-size:clamp(19px,2.2vw,27px);
+    line-height:1.55;
+    font-weight:300;
+    color:#dcdcdc;
+  }
+  .summary-text b{color:var(--white);font-weight:600;}
+  @media(max-width:850px){.summary-grid{grid-template-columns:1fr;gap:20px;}}
+
+  /* ---------- TIMELINE / EXPERIENCE ---------- */
+  #experience{padding-top:80px;}
+  .section-head{margin-bottom:44px;}
+  .section-head h2{font-size:clamp(36px,5vw,58px);font-weight:700;}
+
+  .timeline{
+    position:relative;
+    max-width:980px;
+    margin:0 auto;
+  }
+  .timeline::before{
+    content:'';
+    position:absolute;
+    left:14px;top:0;bottom:0;
+    width:1px;
+    background:linear-gradient(var(--red-deep), var(--line) 90%);
+  }
+  .timeline-item{
+    position:relative;
+    padding-left:60px;
+    margin-bottom:40px;
+  }
+  .timeline-item:last-child{margin-bottom:0;}
+  .timeline-dot{
+    position:absolute;
+    left:6px;top:6px;
+    width:17px;height:17px;
+    border-radius:50%;
+    background:var(--bg);
+    border:2px solid var(--red);
+    box-shadow:0 0 0 5px rgba(224,16,42,0.09);
+  }
+  .timeline-card{
+    border:1px solid var(--line);
+    background:linear-gradient(155deg, rgba(255,255,255,0.035), rgba(255,255,255,0.008));
+    border-radius:14px;
+    padding:34px 36px;
+    transform-style:preserve-3d;
+    transition:border-color .3s, box-shadow .3s;
+    will-change:transform;
+  }
+  .timeline-card:hover{
+    border-color:var(--line-red);
+    box-shadow:0 25px 60px -20px rgba(224,16,42,0.35);
+  }
+  .job-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-bottom:6px;
+  }
+  .job-title{font-size:21px;font-weight:600;font-family:'Big Shoulders Display',sans-serif;letter-spacing:0.4px;}
+  .job-company{font-size:13.5px;color:var(--red);font-weight:500;margin-top:2px;letter-spacing:0.3px;}
+  .job-duration{
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--gray);
+    border:1px solid var(--line);
+    padding:5px 12px;
+    border-radius:100px;
+    white-space:nowrap;
+  }
+  .job-bullets{list-style:none;margin-top:18px;}
+  .job-bullets li{
+    font-size:14.5px;
+    color:#c7c7ca;
+    line-height:1.65;
+    margin-bottom:10px;
+    padding-left:20px;
+    position:relative;
+    font-weight:300;
+  }
+  .job-bullets li::before{
+    content:'';
+    position:absolute;left:0;top:9px;
+    width:7px;height:1px;
+    background:var(--red);
+  }
+
+  /* ---------- SKILLS ---------- */
+  #skills{padding-top:70px;}
+  .skills-columns{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:26px;
+  }
+  @media(max-width:900px){.skills-columns{grid-template-columns:1fr;}}
+  .skill-card{
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:30px 28px;
+    background:linear-gradient(160deg, rgba(224,16,42,0.05), rgba(255,255,255,0.015));
+    transform-style:preserve-3d;
+    will-change:transform;
+    transition:border-color .3s;
+  }
+  .skill-card:hover{border-color:var(--line-red);}
+  .skill-icon{
+    width:38px;height:38px;
+    border-radius:10px;
+    background:rgba(224,16,42,0.12);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:20px;
+  }
+  .skill-icon svg{width:19px;height:19px;fill:var(--red);}
+  .skill-card h3{font-size:17px;font-weight:600;margin-bottom:14px;letter-spacing:0.3px;}
+  .skill-tags{display:flex;flex-wrap:wrap;gap:8px;}
+  .skill-tag{
+    font-size:11.5px;
+    padding:6px 12px;
+    border:1px solid var(--line);
+    border-radius:100px;
+    color:var(--gray);
+    font-weight:500;
+    letter-spacing:0.2px;
+  }
+
+  /* ---------- EDUCATION ---------- */
+  #education{padding-top:70px;}
+  .edu-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:24px;
+  }
+  @media(max-width:900px){.edu-grid{grid-template-columns:1fr;}}
+  .edu-card{
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:30px 26px;
+    position:relative;
+    overflow:hidden;
+  }
+  .edu-card::before{
+    content:'';
+    position:absolute;top:0;left:0;
+    width:100%;height:2px;
+    background:linear-gradient(90deg, var(--red), transparent);
+  }
+  .edu-year{font-size:11px;letter-spacing:2px;color:var(--red);text-transform:uppercase;font-weight:600;margin-bottom:14px;}
+  .edu-degree{font-size:18px;font-weight:600;font-family:'Big Shoulders Display',sans-serif;margin-bottom:6px;}
+  .edu-inst{font-size:13px;color:var(--gray);}
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  #contact{
+    align-items:center;
+    text-align:center;
+    min-height:70vh;
+  }
+  .contact-headline{
+    font-size:clamp(38px,7vw,86px);
+    font-weight:700;
+    line-height:1.02;
+    max-width:900px;
+  }
+  .contact-headline .accent{color:var(--red);}
+  .contact-sub{
+    font-size:15px;
+    color:var(--gray);
+    max-width:520px;
+    margin:24px 0 46px;
+    font-weight:300;
+  }
+  .contact-actions{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;}
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:16px 30px;
+    border-radius:100px;
+    font-size:13px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    text-decoration:none;
+    font-weight:600;
+    transition:.3s;
+  }
+  .btn-primary{background:var(--red);color:#fff;box-shadow:0 15px 40px -15px rgba(224,16,42,0.6);}
+  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 20px 45px -12px rgba(224,16,42,0.75);}
+  .btn-ghost{border:1px solid var(--line);color:var(--white);}
+  .btn-ghost:hover{border-color:var(--line-red);}
+  .btn svg{width:15px;height:15px;fill:currentColor;}
+
+  footer{
+    position:relative;z-index:5;
+    padding:30px 8vw 40px;
+    display:flex;
+    justify-content:space-between;
+    font-size:11px;
+    color:var(--gray);
+    letter-spacing:1px;
+    text-transform:uppercase;
+    border-top:1px solid var(--line);
+  }
+  @media(max-width:600px){footer{flex-direction:column;gap:10px;text-align:center;}}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="vignette"></div>
+<div class="noise"></div>
+
+<nav>
+  <div class="nav-dot active" data-target="hero" data-label="Intro"></div>
+  <div class="nav-dot" data-target="summary" data-label="Profile"></div>
+  <div class="nav-dot" data-target="experience" data-label="Experience"></div>
+  <div class="nav-dot" data-target="skills" data-label="Expertise"></div>
+  <div class="nav-dot" data-target="education" data-label="Education"></div>
+  <div class="nav-dot" data-target="contact" data-label="Contact"></div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="float-layer">
+    <div class="float-icon" data-speed="0.15" style="width:64px;height:64px;top:14%;right:10%;">
+      <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zM18 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+    </div>
+    <div class="float-icon gray" data-speed="0.3" style="width:38px;height:38px;top:52%;right:22%;">
+      <svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2.5 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+    </div>
+  </div>
+  <div class="hero-inner">
+    <div class="eyebrow reveal">Curriculum Vitae · Delhi, India</div>
+    <h1 class="hero-name reveal">Ganesh<br>Kumar Jha</h1>
+    <p class="hero-title reveal">
+      <strong>Logistics, Freight & Projects professional</strong> — turning shipment data and network
+      operations into clear decisions. Currently building toward telecom & fiber infrastructure projects,
+      grounded in 2+ years of freight coordination and client operations.
+    </p>
+    <div class="hero-contacts reveal">
+      <div class="contact-pill">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Ganeshworldwide0001@gmail.com
+      </div>
+      <div class="contact-pill">
+        <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        +91 8851264761
+      </div>
+      <div class="contact-pill">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        Delhi, India
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue"><div class="scroll-line"></div>Scroll</div>
+</section>
+
+<!-- SUMMARY -->
+<section id="summary">
+  <div class="float-layer">
+    <div class="float-icon" data-speed="0.2" style="width:46px;height:46px;top:10%;left:6%;">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+    </div>
+    <div class="float-icon gray" data-speed="0.35" style="width:30px;height:30px;bottom:12%;left:34%;">
+      <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zM18 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+    </div>
+  </div>
+  <div class="eyebrow reveal">01 — Profile</div>
+  <div class="summary-grid">
+    <div class="summary-num reveal">2+<br>YRS</div>
+    <p class="summary-text reveal">
+      <b>Customer-focused logistics professional</b> with experience in freight coordination, transport
+      operations and high-volume client support across the cargo and supply chain industry. Skilled at
+      turning day-to-day shipment and transport data into <b>clear, timely updates</b> that keep clients
+      confident, and comfortable handling escalations under pressure. Works fluently in Excel, Google
+      Sheets and Freight/Transport Management Systems, with working SQL knowledge and hands-on use of
+      AI tools to speed up reporting and troubleshooting.
+    </p>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="float-layer">
+    <div class="float-icon" data-speed="0.18" style="width:52px;height:52px;top:8%;right:8%;">
+      <svg viewBox="0 0 24 24"><path d="M20 3H4c-1.1 0-2 .9-2 2v3.01c0 .72.39 1.35.97 1.69V19c0 1.1 1.1 2 2.2 2h13.66c1.1 0 2.2-.9 2.2-2V9.7c.58-.34.97-.97.97-1.69V5c0-1.1-.9-2-2-2zm-1 16H5V10h14v9zm1-11H4V5h16v3z"/></svg>
+    </div>
+    <div class="float-icon gray" data-speed="0.28" style="width:40px;height:40px;bottom:6%;right:26%;">
+      <svg viewBox="0 0 24 24"><path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.15.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z"/></svg>
+    </div>
+  </div>
+  <div class="section-head">
+    <div class="eyebrow reveal">02 — Experience</div>
+    <h2 class="reveal">Where I've delivered</h2>
+  </div>
+  <div class="timeline">
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <div class="job-row">
+          <div>
+            <div class="job-title">Senior Executive — Logistics & Client Support</div>
+            <div class="job-company">PDS International Pvt Ltd</div>
+          </div>
+          <div class="job-duration">Apr 2024 — 2026</div>
+        </div>
+        <ul class="job-bullets">
+          <li>Cut shipment tracking delays by 15% by rolling out a standardized daily MIS tracking framework and automating live transit updates with Excel formulas.</li>
+          <li>Sustained 98% client retention across a demanding portfolio of major corporate accounts through proactive communication and consistent feedback loops.</li>
+          <li>Reduced turnaround on operational troubleshooting and emergency escalations by 20% via disciplined use of the internal Freight Management System (FMS).</li>
+          <li>Delivered 100% on-time weekly operational reports by pulling data with basic SQL lookups and using AI tools to speed up analysis and build clear dashboards.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <div class="job-row">
+          <div>
+            <div class="job-title">Transport Coordinator & Broker</div>
+            <div class="job-company">Logistics & Fleet Services (Independent / Contract)</div>
+          </div>
+          <div class="job-duration">Oct 2022 — Mar 2024</div>
+        </div>
+        <ul class="job-bullets">
+          <li>Delivered a 94% on-time delivery rate for regional commercial freight by coordinating fleet scheduling and negotiating competitive spot rates with vendors.</li>
+          <li>Maintained a zero-error billing reconciliation rate using the Transport Receipt System (TRS) across high-volume vendor receipts.</li>
+          <li>Acted as primary point of contact for external clients, resolving in-transit disruptions through prompt, solutions-focused communication.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="float-layer">
+    <div class="float-icon" data-speed="0.22" style="width:44px;height:44px;top:6%;left:8%;">
+      <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04,-0.3 0.06,-0.61 0.06,-0.94c0,-0.32 -0.02,-0.64 -0.07,-0.94l2.03,-1.58c0.18,-0.14 0.23,-0.41 0.12,-0.61l-1.92,-3.32c-0.12,-0.22 -0.37,-0.29 -0.59,-0.22l-2.39,0.96c-0.5,-0.38 -1.03,-0.7 -1.62,-0.94L14.4,2.81c-0.04,-0.24 -0.24,-0.41 -0.48,-0.41h-3.84c-0.24,0 -0.43,0.17 -0.47,0.41L9.25,5.35C8.66,5.59 8.12,5.92 7.63,6.29L5.24,5.33c-0.22,-0.08 -0.47,0 -0.59,0.22L2.74,8.87C2.62,9.08 2.66,9.34 2.86,9.48l2.03,1.58C4.84,11.36 4.8,11.69 4.8,12s0.02,0.64 0.07,0.94l-2.03,1.58c-0.18,0.14 -0.23,0.41 -0.12,0.61l1.92,3.32c0.12,0.22 0.37,0.29 0.59,0.22l2.39,-0.96c0.5,0.38 1.03,0.7 1.62,0.94l0.36,2.54c0.05,0.24 0.24,0.41 0.48,0.41h3.84c0.24,0 0.44,-0.17 0.47,-0.41l0.36,-2.54c0.59,-0.24 1.13,-0.56 1.62,-0.94l2.39,0.96c0.22,0.08 0.47,0 0.59,-0.22l1.92,-3.32c0.12,-0.22 0.07,-0.47 -0.12,-0.61L19.14,12.94zM12,15.6c-1.98,0 -3.6,-1.62 -3.6,-3.6s1.62,-3.6 3.6,-3.6s3.6,1.62 3.6,3.6S13.98,15.6 12,15.6z"/></svg>
+    </div>
+    <div class="float-icon gray" data-speed="0.3" style="width:34px;height:34px;bottom:10%;right:10%;">
+      <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zM18 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+    </div>
+  </div>
+  <div class="section-head">
+    <div class="eyebrow reveal">03 — Expertise</div>
+    <h2 class="reveal">What I bring</h2>
+  </div>
+  <div class="skills-columns">
+    <div class="skill-card reveal">
+      <div class="skill-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
+      <h3>Customer Service</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">Client Relationships</span>
+        <span class="skill-tag">Escalation Handling</span>
+        <span class="skill-tag">Proactive Comm.</span>
+        <span class="skill-tag">Stakeholder Engagement</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg></div>
+      <h3>Logistics Operations</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">Freight Forwarding</span>
+        <span class="skill-tag">TRS & FMS</span>
+        <span class="skill-tag">Dispatch Coordination</span>
+        <span class="skill-tag">SLA Compliance</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg></div>
+      <h3>Tools & Data</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">MS Excel (Advanced)</span>
+        <span class="skill-tag">Google Sheets</span>
+        <span class="skill-tag">SQL (Basic)</span>
+        <span class="skill-tag">Claude & Gemini</span>
+        <span class="skill-tag">Daily MIS Tracking</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="float-layer">
+    <div class="float-icon" data-speed="0.2" style="width:42px;height:42px;top:8%;right:12%;">
+      <svg viewBox="0 0 24 24"><path d="M20 3H4c-1.1 0-2 .9-2 2v3.01c0 .72.39 1.35.97 1.69V19c0 1.1 1.1 2 2.2 2h13.66c1.1 0 2.2-.9 2.2-2V9.7c.58-.34.97-.97.97-1.69V5c0-1.1-.9-2-2-2zm-1 16H5V10h14v9zm1-11H4V5h16v3z"/></svg>
+    </div>
+  </div>
+  <div class="section-head">
+    <div class="eyebrow reveal">04 — Education</div>
+    <h2 class="reveal">Foundation</h2>
+  </div>
+  <div class="edu-grid">
+    <div class="edu-card reveal">
+      <div class="edu-year">2026</div>
+      <div class="edu-degree">Bachelor of Commerce</div>
+      <div class="edu-inst">Delhi University</div>
+    </div>
+    <div class="edu-card reveal">
+      <div class="edu-year">2024</div>
+      <div class="edu-degree">Professional Diploma in MIS & Data Analytics</div>
+      <div class="edu-inst">Plus-is Institute of Technology</div>
+    </div>
+    <div class="edu-card reveal">
+      <div class="edu-year">2022</div>
+      <div class="edu-degree">Senior Secondary (Class XII)</div>
+      <div class="edu-inst">CBSE</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="float-layer">
+    <div class="float-icon" data-speed="0.16" style="width:46px;height:46px;top:12%;left:10%;">
+      <svg viewBox="0 0 24 24"><path d="M12 2c-1.1 0-2 .9-2 2 0 .74.4 1.38 1 1.72V7H8L5.6 4.6 4.19 6.01 6.5 8.32V10H4v2h2.5v.68c0 3.1 2.03 5.71 4.83 6.61L11 22h2l-.33-2.71c2.8-.9 4.83-3.51 4.83-6.61V12H20v-2h-2.5V8.32l2.31-2.31-1.41-1.41L16 7h-3V5.72c.6-.34 1-.98 1-1.72 0-1.1-.9-2-2-2z"/></svg>
+    </div>
+    <div class="float-icon gray" data-speed="0.3" style="width:34px;height:34px;bottom:14%;right:12%;">
+      <svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2.5 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+    </div>
+  </div>
+  <div class="eyebrow reveal" style="justify-content:center;">05 — Let's talk</div>
+  <h2 class="contact-headline reveal">Ready for the next<br><span class="accent">network to build.</span></h2>
+  <p class="contact-sub reveal">Open to Projects, NOC and Compliance-adjacent roles in telecom &amp; fiber networking, and logistics leadership positions.</p>
+  <div class="contact-actions reveal">
+    <a class="btn btn-primary" href="mailto:Ganeshworldwide0001@gmail.com">
+      <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      Email me
+    </a>
+    <a class="btn btn-ghost" href="tel:+918851264761">
+      <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+      Call me
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span>Ganesh Kumar Jha © 2026</span>
+  <span>Delhi, India</span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ============ THREE.JS BACKGROUND — SCROLL + CURSOR REACTIVE NETWORK ============ */
+(function(){
+  const canvas = document.getElementById('bg-canvas');
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.1, 100);
+  camera.position.z = 7;
+
+  const redMat = new THREE.LineBasicMaterial({color:0xe0102a, transparent:true, opacity:0.55});
+  const redMatFaint = new THREE.LineBasicMaterial({color:0x7a0d1f, transparent:true, opacity:0.35});
+  const dotMat = new THREE.PointsMaterial({color:0xff2d47, size:0.045, transparent:true, opacity:0.85});
+
+  // Object A: Icosahedron "freight network" — logistics phase
+  const geoA = new THREE.IcosahedronGeometry(2.6, 1);
+  const wireA = new THREE.LineSegments(new THREE.EdgesGeometry(geoA), redMat);
+  const dotsA = new THREE.Points(geoA, dotMat);
+  const groupA = new THREE.Group();
+  groupA.add(wireA, dotsA);
+  scene.add(groupA);
+
+  // Object B: Torus knot "fiber network" — telecom phase
+  const geoB = new THREE.TorusKnotGeometry(1.9, 0.55, 140, 12);
+  const wireB = new THREE.LineSegments(new THREE.EdgesGeometry(geoB), redMatFaint);
+  const dotsB = new THREE.Points(geoB, dotMat);
+  const groupB = new THREE.Group();
+  groupB.add(wireB, dotsB);
+  groupB.visible = true;
+  scene.add(groupB);
+
+  // Ambient scattered particles (data points)
+  const starGeo = new THREE.BufferGeometry();
+  const starCount = 260;
+  const starPos = new Float32Array(starCount*3);
+  for(let i=0;i<starCount;i++){
+    starPos[i*3] = (Math.random()-0.5)*26;
+    starPos[i*3+1] = (Math.random()-0.5)*26;
+    starPos[i*3+2] = (Math.random()-0.5)*18 - 4;
+  }
+  starGeo.setAttribute('position', new THREE.BufferAttribute(starPos,3));
+  const starMat = new THREE.PointsMaterial({color:0x8f8f96, size:0.028, transparent:true, opacity:0.5});
+  const stars = new THREE.Points(starGeo, starMat);
+  scene.add(stars);
+
+  // Mouse parallax targets
+  let mouseX=0, mouseY=0, curX=0, curY=0;
+  window.addEventListener('mousemove', (e)=>{
+    mouseX = (e.clientX/window.innerWidth - 0.5) * 2;
+    mouseY = (e.clientY/window.innerHeight - 0.5) * 2;
+  });
+  window.addEventListener('touchmove', (e)=>{
+    if(e.touches[0]){
+      mouseX = (e.touches[0].clientX/window.innerWidth - 0.5) * 2;
+      mouseY = (e.touches[0].clientY/window.innerHeight - 0.5) * 2;
+    }
+  });
+
+  // Scroll progress
+  let scrollProgress = 0;
+  function updateScroll(){
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    scrollProgress = h > 0 ? window.scrollY / h : 0;
+  }
+  window.addEventListener('scroll', updateScroll, {passive:true});
+  updateScroll();
+
+  function animate(){
+    requestAnimationFrame(animate);
+
+    curX += (mouseX - curX) * 0.04;
+    curY += (mouseY - curY) * 0.04;
+
+    // Scroll-driven travel: object moves up through the scene as page scrolls
+    const travel = scrollProgress * 14;
+    groupA.position.y = 3 - travel*0.9;
+    groupB.position.y = -3 + travel*0.9;
+
+    // Crossfade between the two geometries around the experience->skills transition
+    const morph = Math.min(Math.max((scrollProgress-0.28)/0.4, 0), 1);
+    wireA.material.opacity = 0.55 * (1-morph);
+    dotsA.material.opacity = 0.85 * (1-morph);
+    wireB.material.opacity = 0.55 * morph;
+    dotsB.material.opacity = 0.85 * morph;
+
+    // Base rotation driven by scroll, plus cursor tilt
+    groupA.rotation.y = scrollProgress * 3.4 + curX * 0.35;
+    groupA.rotation.x = scrollProgress * 1.2 + curY * 0.25;
+    groupB.rotation.y = -scrollProgress * 2.6 + curX * 0.3;
+    groupB.rotation.x = scrollProgress * 1.6 + curY * 0.3;
+
+    stars.rotation.y = scrollProgress * 0.6 + curX * 0.1;
+    stars.rotation.x = curY * 0.08;
+
+    // Camera subtle parallax
+    camera.position.x += ( curX*0.6 - camera.position.x ) * 0.05;
+    camera.position.y += ( -curY*0.4 - camera.position.y ) * 0.05;
+    camera.lookAt(0,0,0);
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', ()=>{
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+
+/* ============ FLOATING LOGISTICS ICONS — SCROLL PARALLAX ============ */
+(function(){
+  const icons = Array.from(document.querySelectorAll('.float-icon')).map(el=>{
+    return {
+      el,
+      speed: parseFloat(el.dataset.speed) || 0.2,
+      driftPhase: Math.random()*Math.PI*2,
+      driftSpeed: 0.6 + Math.random()*0.6,
+      rotateAmt: (Math.random()<0.5?-1:1) * (8 + Math.random()*10)
+    };
+  });
+  let lastScroll = window.scrollY;
+  let ticking = false;
+
+  function render(){
+    const t = performance.now()/1000;
+    const scrollY = window.scrollY;
+    icons.forEach(item=>{
+      const drift = Math.sin(t*item.driftSpeed + item.driftPhase) * 14;
+      const parallax = -scrollY * item.speed;
+      const rotate = (scrollY * item.speed * 0.06) % 360;
+      item.el.style.transform = `translateY(${parallax + drift}px) rotate(${rotate}deg)`;
+    });
+    ticking = false;
+  }
+  function onScrollOrFrame(){
+    if(!ticking){
+      requestAnimationFrame(render);
+      ticking = true;
+    }
+  }
+  window.addEventListener('scroll', onScrollOrFrame, {passive:true});
+  setInterval(onScrollOrFrame, 50); // keeps the ambient drift alive even without scrolling
+  render();
+})();
+
+/* ============ SCROLL REVEAL ============ */
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('in');
+    }
+  });
+}, {threshold:0.15});
+revealEls.forEach(el=>io.observe(el));
+
+/* ============ NAV DOTS: active state + click-scroll ============ */
+const sections = document.querySelectorAll('section');
+const dots = document.querySelectorAll('.nav-dot');
+dots.forEach(dot=>{
+  dot.addEventListener('click', ()=>{
+    document.getElementById(dot.dataset.target).scrollIntoView({behavior:'smooth'});
+  });
+});
+const navObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      dots.forEach(d=>d.classList.remove('active'));
+      const match = document.querySelector(`.nav-dot[data-target="${entry.target.id}"]`);
+      if(match) match.classList.add('active');
+    }
+  });
+}, {threshold:0.5});
+sections.forEach(s=>navObserver.observe(s));
+
+/* ============ CARD 3D TILT ON CURSOR ============ */
+const tiltCards = document.querySelectorAll('.timeline-card, .skill-card, .edu-card');
+tiltCards.forEach(card=>{
+  card.addEventListener('mousemove', (e)=>{
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left)/r.width - 0.5;
+    const y = (e.clientY - r.top)/r.height - 0.5;
+    card.style.transform = `perspective(900px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateZ(6px)`;
+  });
+  card.addEventListener('mouseleave', ()=>{
+    card.style.transform = 'perspective(900px) rotateY(0deg) rotateX(0deg) translateZ(0)';
+  });
+});
+</script>
+
+</body>
+</html>
